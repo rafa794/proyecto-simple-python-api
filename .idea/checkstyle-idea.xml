@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CheckStyle-IDEA" serialisationVersion="2">
+    <checkstyleVersion>8.34</checkstyleVersion>
+    <scanScope>JavaOnly</scanScope>
+    <suppressErrors>true</suppressErrors>
+    <option name="thirdPartyClasspath" />
+    <option name="activeLocationIds">
+      <option value="0aab628d-6fd4-4e11-b975-e973caa98df7" />
+    </option>
+    <option name="locations">
+      <list>
+        <ConfigurationLocation id="bundled-sun-checks" type="BUNDLED" scope="All" description="Sun Checks">(bundled)</ConfigurationLocation>
+        <ConfigurationLocation id="bundled-google-checks" type="BUNDLED" scope="All" description="Google Checks">(bundled)</ConfigurationLocation>
+        <ConfigurationLocation id="0aab628d-6fd4-4e11-b975-e973caa98df7" type="LOCAL_FILE" scope="All" description="Checkstyle">$USER_HOME$/scheduling-engine/build-tools/src/main/resources/build-tools/nuvolar-checkstyle.xml</ConfigurationLocation>
+      </list>
+    </option>
+  </component>
+</project>
