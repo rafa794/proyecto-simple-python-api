@@ -1,0 +1,61 @@
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build image
+        run: docker build -t my-app .
+      - name: Run app container
+        run: docker run --name my-app -d -p 8000:8000 my-app
+      - name: Wait for the container to be healthy
+        run: |
+          MAX_RETRIES=20
+          RETRY_COUNT=0
+
+          while true; do
+            status=$(docker inspect --format='{{.State.Health.Status}}' my-app 2>/dev/null || echo "unknown")
+
+            echo "Current status: $status"
+
+            if [ "$status" = "healthy" ]; then
+              echo "Container is healthy ✅"
+              break
+            fi
+
+            if [ "$status" = "unhealthy" ]; then
+              echo "Container is unhealthy ❌"
+              docker logs my-app
+              exit 1
+            fi
+
+            if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
+              echo "Timeout waiting for container to become healthy ⏱️"
+              docker logs my-app
+              exit 1
+            fi
+
+            RETRY_COUNT=$((RETRY_COUNT+1))
+            echo "Waiting... ($RETRY_COUNT/$MAX_RETRIES)"
+            sleep 5
+          done
+      - name: Run tests
+        run: |
+          curl -f http://localhost:8000/items || (echo "App is not responding")
+      - name: Add mock data
+        run: |
+          curl -X POST http://localhost:8000/items -H "Content-Type: application/json" -d '{"name": "Rafa"}'
+      - name: Verify mock data
+        run: |
+          response=$(curl -s http://localhost:8000/items)
+          echo "Response: $response"
+          if [[ "$response" != *"Rafa"* ]]; then
+            echo "Mock data not found in response ❌"
+            exit 1
+          else
+            echo "Mock data verified successfully ✅"
+          fi
+      - name: Stop and remove the container
+        run: |
+          docker stop my-app
+          docker rm my-app
